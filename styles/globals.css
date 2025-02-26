@@ -2,12 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+      linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
 :root {
   --google-blue: #4285f4;
   --google-red: #ea4335;
   --google-yellow: #fbbc05;
   --google-green: #34a853;
-  --background: #ffffff;
+  --background: #3951a8;
   --foreground: #202124;
   --gray-100: #f8f9fa;
   --gray-200: #f1f3f4;
@@ -15,50 +24,61 @@
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
   color: var(--foreground);
-  background: var(--background);
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  position: relative;
 }
 
 .google-card {
-  @apply bg-white rounded-lg shadow-md transition-all duration-300;
-  border: 1px solid var(--gray-300);
+  @apply rounded-2xl transition-all duration-300;
+  border: 1px solid rgba(229, 231, 235, 0.7);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
 .google-card:hover {
-  @apply shadow-lg;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }
 
 .google-input {
-  @apply w-full px-4 py-3 text-lg transition-all duration-300;
-  background: white;
+  @apply w-full px-6 py-4 text-lg transition-all duration-300;
+  background: rgba(255, 255, 255, 0.8);
   border: 2px solid var(--gray-200);
-  border-radius: 12px;
+  border-radius: 16px;
   color: var(--foreground);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  backdrop-filter: blur(5px);
 }
 
 .google-input:hover {
   border-color: var(--gray-300);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .google-input:focus {
   @apply outline-none;
   border-color: var(--google-blue);
-  box-shadow: 0 3px 8px rgba(66,133,244,0.15);
+  box-shadow: 0 4px 12px rgba(66,133,244,0.15);
 }
 
 .google-button {
   @apply px-6 py-3 font-medium text-white transition-all duration-300;
   background: var(--google-blue);
-  border-radius: 8px;
+  border-radius: 12px;
   min-width: 160px;
 }
 
 .google-button:hover {
-  @apply shadow-md;
+  @apply shadow-lg;
   background: #1a73e8;
   transform: translateY(-1px);
 }
@@ -84,29 +104,16 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-.download-button {
-  @apply px-6 py-3 font-medium text-white transition-all duration-300;
-  background: var(--google-green);
-  border-radius: 8px;
-  min-width: 160px;
-}
-
-.download-button:hover {
-  @apply shadow-md;
-  background: #2d9249;
-  transform: translateY(-1px);
-}
-
-/* Paper-like effect styles */
 .paper-effect {
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 16px;
   box-shadow:
-    0 1px 1px rgba(0,0,0,0.12),
-    0 2px 2px rgba(0,0,0,0.12),
-    0 4px 4px rgba(0,0,0,0.12),
-    0 8px 8px rgba(0,0,0,0.12);
+    0 2px 4px rgba(0,0,0,0.08),
+    0 4px 8px rgba(0,0,0,0.08),
+    0 8px 16px rgba(0,0,0,0.08),
+    0 16px 32px rgba(0,0,0,0.08);
   position: relative;
+  overflow: hidden;
 }
 
 .paper-effect::before {
@@ -120,33 +127,25 @@ body {
               linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.2) 75%);
   background-size: 4px 4px;
   pointer-events: none;
-  border-radius: 2px;
+  border-radius: 16px;
 }
 
-.paper-texture {
-  position: relative;
-  background-color: #fff;
-  background-image:
-    linear-gradient(90deg, rgba(200,200,200,.05) 1px, transparent 1px),
-    linear-gradient(rgba(200,200,200,.05) 1px, transparent 1px);
-  background-size: 20px 20px;
+/* Modern animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.paper-shadow {
-  position: relative;
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.paper-shadow::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -15px;
-  height: 15px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.1), transparent);
-  transform: skewX(2deg);
-  transform-origin: 100%;
-  z-index: -1;
+/* Glass morphism effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* Size selector styles */

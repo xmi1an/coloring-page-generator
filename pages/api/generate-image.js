@@ -87,7 +87,7 @@ export default async function handler(req, res) {
       try {
         const image = new Image({
           localPath,
-          prompt: prompt, // Save the original user prompt
+          prompt: prompt, // Save only the prompt value
           imageUrl, // Save the imageUrl in the database
         });
         await image.save();

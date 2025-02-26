@@ -12,25 +12,6 @@ export default function ImageGenerator() {
     "A cute dinosaur baking cookies",
     "A happy sun wearing a party hat",
     "A playful dolphin jumping over a rainbow",
-    "A sleepy panda eating bamboo",
-    "A robot making pizza",
-    "A fairy dancing on a mushroom",
-    "A space cat exploring the moon",
-    "A dragon reading bedtime stories",
-    "A bunny planting carrots",
-    "A penguin having a beach party",
-    "A giraffe playing basketball",
-    "A monkey swinging on vines",
-    "A butterfly collecting flowers",
-    "A puppy playing in autumn leaves",
-    "A mermaid teaching fish to swim",
-    "A squirrel having a picnic",
-    "A friendly ghost baking cupcakes",
-    "A wise owl teaching stars to shine",
-    "A superhero bear saving the day",
-    "A pirate parrot searching for treasure",
-    "A robot dinosaur playing soccer",
-    "A magical fairy tale castle",
   ], []);
 
   const [prompt, setPrompt] = useState("");
@@ -48,15 +29,17 @@ export default function ImageGenerator() {
   }, []);
 
   const saveImage = useCallback((url, promptText) => {
-    const newImage = {
-      url,
-      prompt: promptText,
-      timestamp: new Date().toISOString()
-    };
-    const updatedImages = [newImage, ...savedImages].slice(0, 12);
-    setSavedImages(updatedImages);
-    localStorage.setItem('generatedImages', JSON.stringify(updatedImages));
-  }, [savedImages]);
+    if (!predefinedPrompts.includes(promptText)) { // Only save user input
+      const newImage = {
+        url,
+        prompt: promptText,
+        timestamp: new Date().toISOString()
+      };
+      const updatedImages = [newImage, ...savedImages].slice(0, 12);
+      setSavedImages(updatedImages);
+      localStorage.setItem('generatedImages', JSON.stringify(updatedImages));
+    }
+  }, [savedImages, predefinedPrompts]);
 
   const generateImage = async () => {
     if (!prompt || loading) return;
@@ -66,13 +49,19 @@ export default function ImageGenerator() {
       const apiPrompt = `You make coloring book pages. Black and white outlines of drawings.
             You're a coloring book bot. Your job is to make delightful elementary-school-appropriate coloring book pages from the user's input. You should not respond with any other images. You may ask followup questions. A coloring book page is as follows: Black and white outlines, low complexity. Very simplistic, easy for kids to color in.Always child-appropriate, whimsical themes.
             Here is user input: ${prompt}`;
+
       const response = await axios.post("/api/generate-image", {
         prompt: apiPrompt,
         size: imageSize,
       });
-      const newImageUrl = response.data.imageUrl;
-      setImageUrl(newImageUrl);
-      saveImage(newImageUrl, prompt);
+      const { imageUrl } = response.data;
+      setImageUrl(imageUrl);
+
+      // Save to local storage
+      saveImage(imageUrl, prompt);
+
+      // No need to make a separate API call as the image is already saved
+      // in the generate-image endpoint
     } catch (error) {
       console.error("Error generating image:", error);
     } finally {
@@ -80,29 +69,21 @@ export default function ImageGenerator() {
     }
   };
 
-  const handleDownloadImage = () => {
-    if (imageUrl) {
-      window.open(imageUrl, "_blank");
-    }
-  };
-
   useKeyboardShortcuts({
     onGenerate: generateImage,
-    onDownload: handleDownloadImage,
     inputRef,
-    canDownload: !!imageUrl,
     canGenerate: !!prompt && !loading,
   });
 
   return (
     <div className="space-y-8">
-      <div className="google-card p-4 sm:p-6 md:p-8 backdrop-blur-sm bg-white/90">
-        <div className="max-w-xl mx-auto space-y-4 sm:space-y-6">
+      <div className="adw-card p-6 sm:p-8 animate-fade-in">
+        <div className="max-w-3xl mx-auto space-y-6">
           <div className="relative">
             <input
               ref={inputRef}
               type="text"
-              className="google-input w-full pr-28"
+              className="adw-input"
               placeholder="Describe your coloring page..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -112,41 +93,25 @@ export default function ImageGenerator() {
                 const randomPrompt = predefinedPrompts[Math.floor(Math.random() * predefinedPrompts.length)];
                 setPrompt(randomPrompt);
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
+              className="absolute right-2 top-1/2 -translate-y-1/2 adw-button-secondary p-2"
               type="button"
               title="Generate random prompt"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="4" y="4" width="16" height="16" rx="2" />
-                <circle cx="9" cy="9" r="1" fill="currentColor" />
-                <circle cx="15" cy="9" r="1" fill="currentColor" />
-                <circle cx="9" cy="15" r="1" fill="currentColor" />
-                <circle cx="15" cy="15" r="1" fill="currentColor" />
+              <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 3v2a5 5 0 0 0-3.54 8.54l-1.41 1.41A7 7 0 0 1 10 3zm0 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
               </svg>
             </button>
           </div>
 
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <label className="block text-gray-700 font-medium mb-2">Image Size</label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+          <div>
+            <label className="block text-[--adw-fg-dim] text-sm font-medium mb-2">Image Size</label>
+            <div className="grid grid-cols-3 gap-3">
               {["1024x1024", "1792x1024", "1024x1792"].map((size) => (
                 <button
                   key={size}
-                  className={`size-selector px-4 py-2 rounded-lg border text-sm sm:text-base ${
-                    imageSize === size
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                  } transition-all duration-200`}
+                  className={`adw-button ${
+                    imageSize === size ? 'adw-button-primary' : 'adw-button-secondary'
+                  }`}
                   onClick={() => setImageSize(size)}
                 >
                   {size}
@@ -155,15 +120,15 @@ export default function ImageGenerator() {
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div>
             <button
-              className="google-button w-full sm:w-auto"
+              className="adw-button adw-button-primary w-full"
               onClick={generateImage}
               disabled={loading || !prompt}
             >
               {loading ? (
                 <span className="flex items-center justify-center">
-                  <div className="loader mr-2"></div>
+                  <div className="adw-loading mr-2"></div>
                   Generating...
                 </span>
               ) : (
@@ -172,20 +137,22 @@ export default function ImageGenerator() {
             </button>
           </div>
 
-          {loading ? (
-            <SkeletonLoader />
-          ) : (
-            imageUrl && (
-              <GeneratedImage
-                imageUrl={imageUrl}
-                loading={loading}
-              />
-            )
-          )}
+          <div className="mt-8">
+            {loading ? (
+              <SkeletonLoader />
+            ) : (
+              imageUrl && (
+                <GeneratedImage
+                  imageUrl={imageUrl}
+                  loading={loading}
+                />
+              )
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="fade-in">
+      <div className="animate-fade-in">
         <ImageGallery images={savedImages} />
       </div>
     </div>

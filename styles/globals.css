@@ -2,165 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .bg-grid-pattern {
-    background-image:
-      linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-}
-
 :root {
-  --google-blue: #4285f4;
-  --google-red: #ea4335;
-  --google-yellow: #fbbc05;
-  --google-green: #34a853;
-  --background: #3951a8;
-  --foreground: #202124;
-  --gray-100: #f8f9fa;
-  --gray-200: #f1f3f4;
-  --gray-300: #e8eaed;
+  /* LibAdwaita Dark Theme Colors */
+  --adw-bg: #1e1e1e;
+  --adw-bg-alt: #242424;
+  --adw-fg: #ffffff;
+  --adw-fg-dim: #ffffffcc;
+  --adw-accent: #78aeed;
+  --adw-accent-bg: #3584e4;
+  --adw-accent-hover: #99c1f1;
+  --adw-border: #ffffff1a;
+  --adw-card-bg: #303030;
+  --adw-card-hover: #383838;
+  --adw-error: #ff7b63;
+  --adw-success: #8ff0a4;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--foreground);
-  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
-  position: relative;
+  @apply bg-[--adw-bg] text-[--adw-fg];
+  font-family: 'Cantarell', system-ui, -apple-system, sans-serif;
 }
 
-.google-card {
-  @apply rounded-2xl transition-all duration-300;
-  border: 1px solid rgba(229, 231, 235, 0.7);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(255, 255, 255, 0.3);
+.adw-card {
+  @apply rounded-xl bg-[--adw-card-bg] border border-[--adw-border] transition-all duration-300;
 }
 
-.google-card:hover {
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(255, 255, 255, 0.5);
+.adw-card:hover {
+  @apply bg-[--adw-card-hover];
+}
+
+.adw-input {
+  @apply w-full px-4 py-2.5 rounded-lg bg-[--adw-bg-alt] border border-[--adw-border] text-[--adw-fg]
+  placeholder:text-[--adw-fg-dim] focus:outline-none focus:ring-2 focus:ring-[--adw-accent]
+  transition-all duration-300;
+}
+
+.adw-button {
+  @apply px-6 py-2.5 rounded-lg font-medium transition-all duration-300
+  disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.adw-button-primary {
+  @apply bg-[--adw-accent-bg] text-[--adw-fg] hover:bg-[--adw-accent-hover];
+}
+
+.adw-button-secondary {
+  @apply bg-[--adw-bg-alt] text-[--adw-fg] border border-[--adw-border]
+  hover:bg-[--adw-card-hover] hover:border-[--adw-accent];
+}
+
+.adw-select {
+  @apply bg-[--adw-bg-alt] border border-[--adw-border] rounded-lg text-[--adw-fg]
+  hover:border-[--adw-accent] transition-all duration-300;
+}
+
+/* Loading animation */
+.adw-loading {
+  @apply inline-block w-5 h-5 border-2 border-[--adw-accent] border-t-transparent
+  rounded-full animate-spin;
+}
+
+/* Image gallery effects */
+.adw-image-card {
+  @apply relative overflow-hidden rounded-xl bg-[--adw-card-bg]
+  border border-[--adw-border] transition-all duration-300;
+}
+
+.adw-image-card:hover {
+  @apply bg-[--adw-card-hover] border-[--adw-accent];
   transform: translateY(-2px);
 }
 
-.google-input {
-  @apply w-full px-6 py-4 text-lg transition-all duration-300;
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--gray-200);
-  border-radius: 16px;
-  color: var(--foreground);
-  backdrop-filter: blur(5px);
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.google-input:hover {
-  border-color: var(--gray-300);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+::-webkit-scrollbar-track {
+  @apply bg-[--adw-bg-alt];
 }
 
-.google-input:focus {
-  @apply outline-none;
-  border-color: var(--google-blue);
-  box-shadow: 0 4px 12px rgba(66,133,244,0.15);
+::-webkit-scrollbar-thumb {
+  @apply bg-[--adw-border] rounded-full hover:bg-[--adw-accent];
 }
 
-.google-button {
-  @apply px-6 py-3 font-medium text-white transition-all duration-300;
-  background: var(--google-blue);
-  border-radius: 12px;
-  min-width: 160px;
-}
-
-.google-button:hover {
-  @apply shadow-lg;
-  background: #1a73e8;
-  transform: translateY(-1px);
-}
-
-.google-button:disabled {
-  @apply opacity-50 cursor-not-allowed transform-none;
-  background: var(--gray-300);
-  box-shadow: none;
-}
-
-.loader {
-  @apply inline-block;
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--gray-200);
-  border-radius: 50%;
-  border-top-color: var(--google-blue);
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.paper-effect {
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow:
-    0 2px 4px rgba(0,0,0,0.08),
-    0 4px 8px rgba(0,0,0,0.08),
-    0 8px 16px rgba(0,0,0,0.08),
-    0 16px 32px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.paper-effect::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.2) 75%),
-              linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.2) 75%);
-  background-size: 4px 4px;
-  pointer-events: none;
-  border-radius: 16px;
-}
-
-/* Modern animations */
+/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Glass morphism effects */
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-/* Size selector styles */
-.size-selector {
-  @apply transition-all duration-200;
-}
-
-.size-selector:hover {
-  @apply bg-gray-50;
-}
-
-.size-selector.active {
-  @apply bg-blue-50 border-blue-500 text-blue-700;
-}
-
-.size-selector.active:hover {
-  @apply bg-blue-100;
+/* Grid background pattern */
+.adw-grid-pattern {
+  background-image: linear-gradient(to right, var(--adw-border) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--adw-border) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
